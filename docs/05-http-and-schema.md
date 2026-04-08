@@ -28,6 +28,138 @@ In [src/domain/CheckIn.ts](/Users/fraser/Github/effect-learning/src/domain/Check
 - keep `notes` optional/nullable
 - require `energy` to be between `0` and `10`
 
+## Read This First
+
+This stage is about the boundary between the outside world and your typed application.
+
+Before this stage:
+
+- the service layer assumed it was receiving typed input
+- the route handlers were placeholders
+
+After this stage:
+
+- `Hono` will receive raw request data
+- `Schema` will turn unknown input into trusted typed input
+- services will stay focused on business logic
+- the route layer will translate failures into HTTP responses
+
+That boundary is important.
+
+The service should not have to deal with raw `unknown` JSON bodies.
+
+## Example 1: Schema At The Boundary
+
+Imagine a books API:
+
+```ts
+import { Schema } from "effect"
+
+const CreateBookInputSchema = Schema.Struct({
+  title: Schema.NonEmptyTrimmedString
+})
+```
+
+Then in the route:
+
+```ts
+const body = await context.req.json()
+
+const program = Effect.gen(function* () {
+  const input = yield* Schema.decodeUnknown(CreateBookInputSchema)(body)
+  const bookService = yield* BookService
+  return yield* bookService.createBook(input)
+})
+```
+
+What matters:
+
+- `req.json()` gives you unknown runtime data
+- `Schema.decodeUnknown(...)` gives you typed input
+- the service receives trusted data
+
+## Example 2: Route Handlers Should Stay Thin
+
+A thin route handler looks like this:
+
+```ts
+books.post("/", async (context) => {
+  const body = await context.req.json()
+
+  const program = Effect.gen(function* () {
+    const input = yield* Schema.decodeUnknown(CreateBookInputSchema)(body)
+    const bookService = yield* BookService
+    return yield* bookService.createBook(input)
+  })
+
+  const exit = await Effect.runPromiseExit(
+    Effect.provide(program, AppLive)
+  )
+
+  // map the exit to an HTTP response here
+})
+```
+
+The route does transport and mapping work.
+It does not implement duplicate checks, not-found logic, or persistence.
+
+## Example 3: Mapping Tagged Errors
+
+Non-answer example:
+
+```ts
+if (Cause.isFailType(cause)) {
+  const error = cause.error
+
+  if (error._tag === "BookNotFound") {
+    return context.json({ message: "Book not found" }, 404)
+  }
+
+  if (error._tag === "DuplicateBookTitle") {
+    return context.json({ message: "Duplicate title" }, 409)
+  }
+}
+```
+
+The important idea is not the exact helper you use.
+The important idea is:
+
+- schema errors become `400`
+- tagged domain errors become prescribed HTTP codes
+- unknown failures become `500`
+
+## Example 4: Range Validation In Schema
+
+A non-answer example for a rating field:
+
+```ts
+const CreateReviewInputSchema = Schema.Struct({
+  rating: pipe(
+    Schema.Number,
+    Schema.greaterThanOrEqualTo(0),
+    Schema.lessThanOrEqualTo(5)
+  ),
+  text: Schema.NullOr(Schema.String)
+})
+```
+
+That is the same idea you need for `energy`, except your range is `0` to `10`.
+
+## Example 5: Optional And Nullable Fields
+
+Another non-answer example:
+
+```ts
+const PatchProfileSchema = Schema.Struct({
+  bio: Schema.optional(Schema.NullOr(Schema.String))
+})
+```
+
+That is the kind of shape you want for fields like:
+
+- `bodyweightKg`
+- `notes`
+
 ### 2. Finish The Route Handlers
 
 In [src/http/routes/athletes.ts](/Users/fraser/Github/effect-learning/src/http/routes/athletes.ts), implement these routes:
@@ -46,6 +178,33 @@ Each handler should:
 5. Provide `AppLive`
 6. Run the effect
 7. Map known errors to plain JSON responses
+
+## What You Should Literally Write
+
+In [src/domain/Athlete.ts](/Users/fraser/Github/effect-learning/src/domain/Athlete.ts):
+
+1. Import `Schema`.
+2. Export `CreateAthleteInputSchema`.
+3. Make `name` a `Schema.NonEmptyTrimmedString`.
+
+In [src/domain/CheckIn.ts](/Users/fraser/Github/effect-learning/src/domain/CheckIn.ts):
+
+1. Import `Schema` and `pipe`.
+2. Export `CreateCheckInInputSchema`.
+3. Make `energy` a number constrained to `0` through `10`.
+4. Make `bodyweightKg` optional/nullable.
+5. Make `notes` optional/nullable.
+
+In [src/http/routes/athletes.ts](/Users/fraser/Github/effect-learning/src/http/routes/athletes.ts):
+
+1. Read params and/or `await context.req.json()`.
+2. Build an `Effect.gen(...)` program.
+3. Decode request bodies with `Schema.decodeUnknown(...)`.
+4. Pull the correct service from the context.
+5. Call the service.
+6. Provide `AppLive`.
+7. Run the effect.
+8. Turn schema/domain/unexpected failures into the prescribed response codes.
 
 ### 3. Prescribed Status Codes
 
@@ -94,6 +253,7 @@ Work through these in order:
 - The route builds and runs an `Effect`.
 - `Schema` guards the boundary.
 - Domain errors map cleanly into HTTP codes.
+- The service layer does not know anything about HTTP response objects.
 
 ## Checkpoint
 
@@ -110,4 +270,3 @@ Work through these in order:
 ## Common Mistake
 
 - Letting route handlers grow business logic branches instead of mapping errors and delegating to services.
-

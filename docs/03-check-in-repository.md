@@ -32,6 +32,187 @@ Then go to [src/application/AppLive.ts](/Users/fraser/Github/effect-learning/src
 
 Use `Layer.mergeAll(...)`.
 
+## Read This First
+
+This stage teaches two separate things:
+
+- how to build a second repository that follows the same pattern as the first
+- how several layers get combined into one live application layer
+
+You are not learning anything fundamentally new about the in-memory repository shape. You are learning how repeated patterns become composable.
+
+## Example 1: A Second Repository In Another Domain
+
+Imagine you already had a `BookRepository` and now you needed a `ReviewRepository`.
+
+The second repository would look familiar:
+
+```ts
+interface Review {
+  readonly id: string
+  readonly bookId: string
+  readonly rating: number
+  readonly text: string | null
+}
+
+interface CreateReviewInput {
+  readonly rating: number
+  readonly text?: string | null
+}
+
+interface ReviewRepositoryService {
+  readonly create: (
+    bookId: string,
+    input: CreateReviewInput
+  ) => Effect.Effect<Review>
+  readonly listByBookId: (
+    bookId: string
+  ) => Effect.Effect<ReadonlyArray<Review>>
+  readonly countByBookId: (bookId: string) => Effect.Effect<number>
+}
+```
+
+That is the same kind of step you are taking now:
+
+- you already built `AthleteRepository`
+- now you are building `CheckInRepository`
+- the pattern stays the same
+
+## Example 2: Optional Fields Becoming Null
+
+If an input field is optional, the repository can normalize it before storing it.
+
+Example:
+
+```ts
+create: (bookId, input) => {
+  const review: Review = {
+    id: randomUUID(),
+    bookId,
+    rating: input.rating,
+    text: input.text ?? null
+  }
+
+  reviews.push(review)
+  return Effect.succeed(review)
+}
+```
+
+This is the same idea you need for:
+
+- `bodyweightKg`
+- `notes`
+
+If the input omits them, store `null`.
+
+## Example 3: Filtering By Foreign Key
+
+Your `listByAthleteId` method should filter the array to one athlete.
+
+In another domain:
+
+```ts
+listByBookId: (bookId) => {
+  const matchingReviews = reviews.filter((review) => review.bookId === bookId)
+  return Effect.succeed(matchingReviews)
+}
+```
+
+That is exactly the shape you want.
+
+## Example 4: Counting A Subset
+
+Do not count every row in memory. Count only the ones for the requested owner.
+
+Example:
+
+```ts
+countByBookId: (bookId) => {
+  const count = reviews.filter((review) => review.bookId === bookId).length
+  return Effect.succeed(count)
+}
+```
+
+That is the direct pattern for `countByAthleteId`.
+
+## Example 5: Layer Composition
+
+Now the second half of the stage.
+
+Imagine a different app with:
+
+- `BookRepository.InMemory`
+- `ReviewRepository.InMemory`
+- `BookService.Live`
+- `ReviewService.Live`
+
+You could compose them like this:
+
+```ts
+export const AppLive = Layer.mergeAll(
+  BookRepository.InMemory,
+  ReviewRepository.InMemory,
+  BookService.Live,
+  ReviewService.Live
+)
+```
+
+That is the whole point of the composition file:
+
+- put the wiring in one place
+- keep the rest of the app depending on tags
+- make implementation swaps happen at the boundary
+
+## Translate The Pattern To Check-Ins
+
+Your real repository should behave like this:
+
+```ts
+create: (athleteId, input) => {
+  // build a CheckIn with a UUID
+  // normalize missing optional fields to null
+  // push into the checkIns array
+  // return Effect.succeed(theCheckIn)
+}
+
+listByAthleteId: (athleteId) => {
+  // filter the array to this athlete's check-ins
+  // return Effect.succeed(filteredCheckIns)
+}
+
+countByAthleteId: (athleteId) => {
+  // count only this athlete's check-ins
+  // return Effect.succeed(theCount)
+}
+```
+
+Then `AppLive` should end up with a shape like:
+
+```ts
+export const AppLive = Layer.mergeAll(
+  AthleteRepository.InMemory,
+  CheckInRepository.InMemory,
+  AthleteService.Live,
+  CheckInService.Live
+)
+```
+
+## What You Should Literally Write
+
+In [src/infrastructure/in-memory/CheckInRepositoryInMemory.ts](/Users/fraser/Github/effect-learning/src/infrastructure/in-memory/CheckInRepositoryInMemory.ts):
+
+1. Keep `checkIns` inside the factory.
+2. Replace the placeholders with `Effect.succeed(...)` logic.
+3. Generate the id with `randomUUID()`.
+4. Normalize missing optional values to `null`.
+5. Filter and count by `athleteId`, not globally.
+
+In [src/application/AppLive.ts](/Users/fraser/Github/effect-learning/src/application/AppLive.ts):
+
+1. Import the two repositories and two services.
+2. Use `Layer.mergeAll(...)`.
+3. Keep all live wiring in this file.
+
 ## What The Check-In Repository Should Do
 
 - Keep an in-memory `checkIns` array inside the factory.
@@ -57,6 +238,7 @@ That is the dependency graph you will keep building on.
 - Both in-memory repositories work.
 - `AppLive` composes the four live layers.
 - You can explain what `AppLive` provides at a high level.
+- You can explain why swapping implementations later should only touch this file.
 
 ## Questions
 
@@ -70,4 +252,3 @@ That is the dependency graph you will keep building on.
 ## Common Mistake
 
 - Returning the total number of check-ins across all athletes from `countByAthleteId`.
-

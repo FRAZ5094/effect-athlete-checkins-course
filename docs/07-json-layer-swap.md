@@ -28,6 +28,79 @@ Do not change:
 
 That is the point of the exercise.
 
+## Read This First
+
+This stage is not about file I/O.
+
+It is about seeing that the rest of the app already depends on repository behavior, not on the in-memory details.
+
+The JSON-backed repositories are already written for you so the lesson stays focused on one thing:
+
+- changing the provided implementation
+
+## Example 1: Swapping One Implementation For Another
+
+Imagine a notifications app with:
+
+```ts
+NotificationRepository.InMemory
+NotificationRepository.File
+```
+
+The composition file might start like:
+
+```ts
+export const AppLive = Layer.mergeAll(
+  NotificationRepository.InMemory,
+  NotificationService.Live
+)
+```
+
+And later change to:
+
+```ts
+export const AppLive = Layer.mergeAll(
+  NotificationRepository.File,
+  NotificationService.Live
+)
+```
+
+That is the same kind of change you are making here.
+
+## Example 2: What Should Not Change
+
+If the boundaries are good, these kinds of methods should stay untouched:
+
+```ts
+recordNotification: (userId, input) =>
+  Effect.gen(function* () {
+    const notificationRepository = yield* NotificationRepository
+    return yield* notificationRepository.create(userId, input)
+  })
+```
+
+The service depends on the tag, not on whether the data lives:
+
+- in memory
+- in JSON
+- in a database
+
+## Example 3: The Point Of The Exercise
+
+The before-and-after should feel like this:
+
+```ts
+// before
+AthleteRepository.InMemory
+CheckInRepository.InMemory
+
+// after
+AthleteRepository.Json
+CheckInRepository.Json
+```
+
+That small diff is the payoff.
+
 ## Manual Verification
 
 1. Start the server again.
@@ -60,4 +133,3 @@ This is the most direct demonstration of why the dependency structure exists.
 ## Common Mistake
 
 - Editing services or routes during the swap. If you need to do that, your boundaries are probably in the wrong place.
-
