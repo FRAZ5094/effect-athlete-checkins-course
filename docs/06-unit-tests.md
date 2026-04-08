@@ -35,19 +35,14 @@ The basic pattern is:
 3. Run the service effect
 4. Assert on the result or on the tagged error
 
-## Read This First
+This stage uses mocked layers to test the service logic in isolation.
 
-This stage is where the dependency-injection story becomes concrete.
+## Read The Real Files In This Order
 
-You built repositories as dependencies.
-You provided them through layers.
-Now you get the payoff:
-
-- swap the real repositories for mocked ones
-- keep the real service code
-- test business behavior in isolation
-
-That is why the earlier structure matters.
+1. [src/testing/AthleteService.test.ts](/Users/fraser/Github/effect-learning/src/testing/AthleteService.test.ts)
+2. [src/testing/CheckInService.test.ts](/Users/fraser/Github/effect-learning/src/testing/CheckInService.test.ts)
+3. Re-read [src/application/AthleteService.ts](/Users/fraser/Github/effect-learning/src/application/AthleteService.ts)
+4. Re-read [src/application/CheckInService.ts](/Users/fraser/Github/effect-learning/src/application/CheckInService.ts)
 
 ## Example 1: A Mocked Repository Layer
 
@@ -147,6 +142,14 @@ it("fails when a business rule is broken", async () => {
 
 Keep the test focused on one business rule at a time.
 
+## Expected Outcome
+
+By the end of this stage, you should be able to:
+
+- test a service without booting the whole app
+- swap in a fake dependency layer
+- assert on domain errors as values
+
 ## AthleteService Tests
 
 Write tests for:
@@ -187,6 +190,23 @@ Write tests for:
 
 - Run `npm test`.
 
+If you get stuck, start with the easiest possible test:
+
+1. mock a repo method with `Effect.succeed(...)`
+2. provide the real service layer
+3. run one service method
+4. assert on one success value
+
+Then add the failing cases after that.
+
 ## Common Mistake
 
 - Re-testing repository behavior in service tests instead of mocking it.
+
+## If You Need Help
+
+Useful questions for Claude or GPT:
+
+- "Can you show me the testing pattern with `Layer.mock(...)` in a different domain?"
+- "Can you review whether this is really a unit test?"
+- "Can you help me assert on the tagged error instead of treating it like a thrown exception?"

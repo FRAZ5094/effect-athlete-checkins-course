@@ -32,14 +32,14 @@ Then go to [src/application/AppLive.ts](/Users/fraser/Github/effect-learning/src
 
 Use `Layer.mergeAll(...)`.
 
-## Read This First
+This stage extends the same repository pattern from the previous stage and adds the first composed application layer.
 
-This stage teaches two separate things:
+## Read The Real Files In This Order
 
-- how to build a second repository that follows the same pattern as the first
-- how several layers get combined into one live application layer
-
-You are not learning anything fundamentally new about the in-memory repository shape. You are learning how repeated patterns become composable.
+1. [src/domain/CheckIn.ts](/Users/fraser/Github/effect-learning/src/domain/CheckIn.ts)
+2. [src/application/CheckInRepository.ts](/Users/fraser/Github/effect-learning/src/application/CheckInRepository.ts)
+3. [src/infrastructure/in-memory/CheckInRepositoryInMemory.ts](/Users/fraser/Github/effect-learning/src/infrastructure/in-memory/CheckInRepositoryInMemory.ts)
+4. [src/application/AppLive.ts](/Users/fraser/Github/effect-learning/src/application/AppLive.ts)
 
 ## Example 1: A Second Repository In Another Domain
 
@@ -197,6 +197,14 @@ export const AppLive = Layer.mergeAll(
 )
 ```
 
+## Expected Outcome
+
+By the end of this stage, you should be able to:
+
+- repeat the repository pattern for another entity
+- explain why one file is responsible for wiring the live app
+- see how an implementation swap can stay localized to the composition layer
+
 ## What You Should Literally Write
 
 In [src/infrastructure/in-memory/CheckInRepositoryInMemory.ts](/Users/fraser/Github/effect-learning/src/infrastructure/in-memory/CheckInRepositoryInMemory.ts):
@@ -249,6 +257,22 @@ That is the dependency graph you will keep building on.
 
 - Run `npm run typecheck`.
 
+If TypeScript complains, the most likely causes are:
+
+- `countByAthleteId` counting every check-in instead of one athlete's check-ins
+- forgetting to normalize optional fields to `null`
+- forgetting imports in `AppLive`
+
 ## Common Mistake
 
 - Returning the total number of check-ins across all athletes from `countByAthleteId`.
+
+## If You Need Help
+
+Ask Claude or GPT focused questions about the current step.
+
+Useful questions:
+
+- "Can you explain what `AppLive` is providing here?"
+- "Can you review whether my `countByAthleteId` is counting the right thing?"
+- "Can you explain layer composition in this stage without jumping ahead?"

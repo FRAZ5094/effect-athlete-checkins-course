@@ -26,17 +26,9 @@ Do not change:
 - service code
 - domain code
 
-That is the point of the exercise.
+The purpose of the exercise is to keep the change localized to the composition layer.
 
-## Read This First
-
-This stage is not about file I/O.
-
-It is about seeing that the rest of the app already depends on repository behavior, not on the in-memory details.
-
-The JSON-backed repositories are already written for you so the lesson stays focused on one thing:
-
-- changing the provided implementation
+The JSON-backed repositories are already written for you. The focus here is changing the provided implementation, not writing file I/O.
 
 ## Example 1: Swapping One Implementation For Another
 
@@ -133,3 +125,11 @@ This is the most direct demonstration of why the dependency structure exists.
 ## Common Mistake
 
 - Editing services or routes during the swap. If you need to do that, your boundaries are probably in the wrong place.
+
+## If You Need Help
+
+Ask Claude or GPT to review the diff in `AppLive.ts`.
+
+Useful question:
+
+- "I swapped the layers in `AppLive.ts`. Can you confirm whether I only changed what this stage was supposed to change?"

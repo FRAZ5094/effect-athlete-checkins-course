@@ -28,25 +28,15 @@ In [src/domain/CheckIn.ts](/Users/fraser/Github/effect-learning/src/domain/Check
 - keep `notes` optional/nullable
 - require `energy` to be between `0` and `10`
 
-## Read This First
+This stage focuses on the boundary between raw HTTP input and typed application code.
+`Hono` receives the request, `Schema` decodes unknown data, services handle the business logic, and the route maps the result back to HTTP.
 
-This stage is about the boundary between the outside world and your typed application.
+## Read The Real Files In This Order
 
-Before this stage:
-
-- the service layer assumed it was receiving typed input
-- the route handlers were placeholders
-
-After this stage:
-
-- `Hono` will receive raw request data
-- `Schema` will turn unknown input into trusted typed input
-- services will stay focused on business logic
-- the route layer will translate failures into HTTP responses
-
-That boundary is important.
-
-The service should not have to deal with raw `unknown` JSON bodies.
+1. [src/domain/Athlete.ts](/Users/fraser/Github/effect-learning/src/domain/Athlete.ts)
+2. [src/domain/CheckIn.ts](/Users/fraser/Github/effect-learning/src/domain/CheckIn.ts)
+3. [src/application/AppLive.ts](/Users/fraser/Github/effect-learning/src/application/AppLive.ts)
+4. [src/http/routes/athletes.ts](/Users/fraser/Github/effect-learning/src/http/routes/athletes.ts)
 
 ## Example 1: Schema At The Boundary
 
@@ -160,6 +150,21 @@ That is the kind of shape you want for fields like:
 - `bodyweightKg`
 - `notes`
 
+## One Route Mental Model
+
+Every route in this stage should feel like a variation of the same recipe:
+
+```ts
+read HTTP input
+  -> decode it
+  -> call a service
+  -> provide AppLive
+  -> run the effect
+  -> map success or failure to an HTTP response
+```
+
+If your route is doing more than that, it is probably taking on too much responsibility.
+
 ### 2. Finish The Route Handlers
 
 In [src/http/routes/athletes.ts](/Users/fraser/Github/effect-learning/src/http/routes/athletes.ts), implement these routes:
@@ -206,6 +211,15 @@ In [src/http/routes/athletes.ts](/Users/fraser/Github/effect-learning/src/http/r
 7. Run the effect.
 8. Turn schema/domain/unexpected failures into the prescribed response codes.
 
+## Expected Outcome
+
+By the end of this stage, you should be able to:
+
+- explain how Hono hands control to the application
+- explain how Schema turns raw input into trusted data
+- explain why the service layer stays free of HTTP concerns
+- explain how the route translates between HTTP and the service layer
+
 ### 3. Prescribed Status Codes
 
 Successful responses:
@@ -247,6 +261,13 @@ Work through these in order:
 5. `GET /athletes/:id/check-ins`
 6. Send a bad check-in with `energy: 11` and confirm you get a schema-driven `400`
 
+If something is failing, debug in this order:
+
+1. Did the request body shape match the schema?
+2. Did the route decode the body before calling the service?
+3. Did the route provide `AppLive` before running the effect?
+4. Is the failure a schema failure, a domain error, or an unexpected defect?
+
 ## What To Notice
 
 - `Hono` is only doing transport work.
@@ -270,3 +291,15 @@ Work through these in order:
 ## Common Mistake
 
 - Letting route handlers grow business logic branches instead of mapping errors and delegating to services.
+
+## If You Need Help
+
+If you get stuck here, ask Claude or GPT narrowly about the route you are working on.
+
+Useful questions:
+
+- "Can you explain the order of operations for this route?"
+- "Can you help me understand where `Schema.decodeUnknown(...)` should happen?"
+- "Can you review my error mapping without rewriting the whole route?"
+
+If the issue is specifically `Hono` wiring or `Effect` integration with `Hono`, ask it to fix that part directly. That is not the main learning goal.

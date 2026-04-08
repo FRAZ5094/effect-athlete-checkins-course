@@ -35,3 +35,28 @@ To preview the markdown nicely on Mac:
 
 Begin with [docs/00-primer.md](/Users/fraser/Github/effect-learning/docs/00-primer.md), then continue in order through the numbered files.
 
+## How To Work Through The Course
+
+- Only work on one stage at a time.
+- Do not skip ahead if the current stage still feels fuzzy.
+- At the start of each stage, read the opening explanation and examples before editing code.
+- Keep `npm run dev` and `npm run typecheck` nearby while you work.
+- If you get stuck, compare your code to the non-answer examples in the current stage before asking for help.
+
+## If You Get Stuck
+
+Ask Claude or GPT for help inside this repo.
+
+- Ask about the current stage only.
+- Say which file you are working in.
+- Say what feels confusing.
+- Ask for coaching first, not the full answer immediately.
+
+Example questions:
+
+- "I am in stage 2, working in `AthleteRepositoryInMemory.ts`. Can you explain what should live inside the factory?"
+- "I am in stage 5, working in `athletes.ts`. Can you explain the route flow without rewriting the whole file?"
+
+If the issue is specifically `Hono` wiring or `Effect` integration with `Hono`, ask it to fix that part directly so you can stay focused on the course.
+
+The repo includes [AGENTS.md](/Users/fraser/Github/effect-learning/AGENTS.md) and [CLAUDE.md](/Users/fraser/Github/effect-learning/CLAUDE.md) with guidance for how the assistant should help you.

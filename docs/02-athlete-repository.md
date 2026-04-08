@@ -24,17 +24,19 @@ The service methods are:
 
 Your main job in this stage is to finish the in-memory implementation in [src/infrastructure/in-memory/AthleteRepositoryInMemory.ts](/Users/fraser/Github/effect-learning/src/infrastructure/in-memory/AthleteRepositoryInMemory.ts).
 
-## Read This First
+The examples below use other domains so you can see the pattern without copying the final answer directly.
 
-This stage is not asking you to invent a repository design from scratch.
+## Read The Real Files In This Order
 
-It is asking you to learn the shape of three ideas:
+1. [src/domain/Athlete.ts](/Users/fraser/Github/effect-learning/src/domain/Athlete.ts)
+2. [src/application/AthleteRepository.ts](/Users/fraser/Github/effect-learning/src/application/AthleteRepository.ts)
+3. [src/infrastructure/in-memory/AthleteRepositoryInMemory.ts](/Users/fraser/Github/effect-learning/src/infrastructure/in-memory/AthleteRepositoryInMemory.ts)
 
-- how a `Context.Tag` names a dependency
-- how an in-memory implementation can keep state inside a factory
-- how repository methods return `Effect` values instead of raw values
+That order works because:
 
-The examples below are intentionally about other domains so you can see the pattern without copying the answer directly.
+- the domain file shows the data shape
+- the repository tag file shows the interface
+- the in-memory file is where you actually implement it
 
 ## Example 1: A Small Repository Tag
 
@@ -206,6 +208,19 @@ list: () => {
 
 That is the level of complexity you should be aiming for in this stage. Nothing more.
 
+## Expected Outcome
+
+By the end of this stage, you should be able to:
+
+- explain how a repository tag is declared
+- explain how an in-memory implementation can close over an array
+- explain why even simple synchronous methods still return `Effect`
+
+It is also normal if these parts still feel incomplete at this point:
+
+- understanding all of Effect
+- seeing the full app in one pass
+
 ## What You Should Literally Write
 
 In [src/infrastructure/in-memory/AthleteRepositoryInMemory.ts](/Users/fraser/Github/effect-learning/src/infrastructure/in-memory/AthleteRepositoryInMemory.ts):
@@ -267,6 +282,22 @@ With a repository tag, the rest of the app depends on behavior, not on a specifi
 
 - Run `npm run typecheck`.
 
+If TypeScript complains, the most likely causes are:
+
+- returning a raw value instead of `Effect.succeed(...)`
+- forgetting `null` in a lookup method
+- returning the wrong shape from `create`
+
 ## Common Mistake
 
 - Putting business rules such as duplicate-name checking into the repository. That belongs in the service layer later.
+
+## If You Need Help
+
+Ask Claude or GPT about this stage only.
+
+Useful questions:
+
+- "Can you explain why this repository method returns `Effect.succeed(...)` instead of a raw value?"
+- "Can you help me understand what should live inside `makeAthleteRepositoryInMemory`?"
+- "Can you review my `AthleteRepositoryInMemory.ts` without giving me the final answer unless I ask?"

@@ -23,20 +23,15 @@ Create tagged errors for:
 
 Use `Data.TaggedError(...)`.
 
-## Read This First
+This stage moves the business rules into services and models expected failures as tagged errors.
 
-This stage is where the architecture starts to pay off.
+## Read The Real Files In This Order
 
-Up to now, the repositories only knew how to store and fetch data.
-
-Now you are adding the part that answers questions like:
-
-- "What counts as a valid business action?"
-- "What should happen if the name already exists?"
-- "What should happen if the athlete is missing?"
-- "What should happen if the athlete already has too many check-ins?"
-
-Those are service questions, not repository questions.
+1. [src/domain/errors.ts](/Users/fraser/Github/effect-learning/src/domain/errors.ts)
+2. [src/application/AthleteService.ts](/Users/fraser/Github/effect-learning/src/application/AthleteService.ts)
+3. [src/application/CheckInService.ts](/Users/fraser/Github/effect-learning/src/application/CheckInService.ts)
+4. Re-read [src/application/AthleteRepository.ts](/Users/fraser/Github/effect-learning/src/application/AthleteRepository.ts)
+5. Re-read [src/application/CheckInRepository.ts](/Users/fraser/Github/effect-learning/src/application/CheckInRepository.ts)
 
 ## Example 1: A Tagged Error In Another Domain
 
@@ -154,8 +149,16 @@ recordThing: (ownerId, input) =>
 
 That is a useful test:
 
-if the method reads like business behavior, it is probably in the right place.
-if it reads like low-level storage mechanics, it probably belongs in a repository.
+If the method reads like business behavior, it is probably in the right place.
+If it reads like low-level storage mechanics, it probably belongs in a repository.
+
+## Expected Outcome
+
+By the end of this stage, you should be able to:
+
+- explain how repositories report available data
+- explain how services turn that data into business behavior
+- explain why expected failures are modeled as explicit values
 
 ## AthleteService Rules
 
@@ -235,6 +238,22 @@ This is one of the core reasons Effect codebases stay testable and predictable.
 
 - Run `npm run typecheck`.
 
+If you get stuck, reduce each service method to this checklist:
+
+1. Get dependencies.
+2. Ask the repository for the data you need.
+3. If a business rule fails, `Effect.fail(...)` with a tagged error.
+4. Otherwise call the next repository method.
+5. Return the success value.
+
 ## Common Mistake
 
 - Checking name uniqueness without trimming first.
+
+## If You Need Help
+
+Useful questions for Claude or GPT:
+
+- "Can you explain why this business rule belongs in the service instead of the repository?"
+- "Can you help me understand how to turn `null` into a tagged error?"
+- "Can you review my service logic and only point out what is wrong?"

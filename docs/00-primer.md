@@ -4,6 +4,26 @@ This repo teaches a small slice of Effect by building a backend API for athlete 
 
 You do not need to understand the whole library up front. You do need a rough mental model of how the core pieces fit together.
 
+## How To Read This Primer
+
+This primer is meant to give you a working mental model, not cover every detail.
+
+The main goals are:
+
+1. An `Effect` describes work, failure, and dependencies.
+2. `Context.Tag` gives a dependency a typed name.
+3. `Layer` provides concrete implementations so effects can run.
+
+If one paragraph feels abstract, focus on the tiny code example that follows it.
+
+If something in this primer feels fuzzy, ask Claude or GPT a narrow question before moving on.
+
+Useful questions:
+
+- "In `Effect<A, E, R>`, what does `R` mean in this repo?"
+- "What is the difference between a `Context.Tag` and a `Layer`?"
+- "Can you explain the tiny examples in the primer without jumping to the later stages?"
+
 ## The Effect Type
 
 An `Effect` is a typed description of work.
@@ -42,6 +62,12 @@ Read that as:
 
 That is the basic mental model you want to keep in your head throughout this repo.
 
+Rule of thumb:
+
+- `A` answers "what do I get back if this works?"
+- `E` answers "what normal failure should I expect?"
+- `R` answers "what does this code need from the outside world?"
+
 ## Dependencies
 
 In a typical codebase, a function might quietly reach into:
@@ -71,6 +97,10 @@ That program is saying:
 - I need an `AthleteRepository`
 - once I have it, I can call one of its methods
 - until that dependency is provided, this is still just a description of work
+
+That last point matters a lot.
+
+When you write Effect code, you are often building a program in pieces first, then providing what it needs later.
 
 ## Context.Tag
 
@@ -103,6 +133,11 @@ class AthleteRepository extends Context.Tag("AthleteRepository")<
 
 That does not create a repository implementation.
 It creates the typed dependency name that other code can ask for.
+
+Beginner translation:
+
+- the tag is the label on the plug
+- the layer is the thing you plug into it
 
 ## Layer
 
@@ -144,7 +179,7 @@ const AppLive = Layer.mergeAll(
 )
 ```
 
-Then, later:
+Later, once the dependencies are available:
 
 ```ts
 const result = await Effect.runPromise(
@@ -153,6 +188,8 @@ const result = await Effect.runPromise(
 ```
 
 That is the moment where the effect gets the dependencies it said it needed.
+
+The key point about layers is that they satisfy the `R` part of `Effect<A, E, R>`.
 
 ## Errors
 
@@ -176,7 +213,7 @@ export class AthleteNotFound extends Data.TaggedError("AthleteNotFound")<{
 }> {}
 ```
 
-Then a service can fail with it deliberately:
+Then a service can fail with it directly:
 
 ```ts
 if (athlete === null) {
@@ -185,6 +222,11 @@ if (athlete === null) {
 ```
 
 That is very different from an unexpected exception. It is a normal, modeled application failure.
+
+Rule of thumb:
+
+- use tagged errors for expected application failures
+- reserve defects / unexpected throws for "something is wrong with the program"
 
 ## The Split In This Repo
 
@@ -198,7 +240,24 @@ This repo keeps each concern in one place:
 
 That separation is the main thing you are learning here.
 
-You are not trying to learn every module in Effect. You are learning how a few core ideas fit together to make backend code explicit, testable, and easy to swap.
+This course only covers a small part of Effect. The goal is to understand how a few core ideas fit together to make backend code explicit, testable, and easy to swap.
+
+## One End-To-End Picture
+
+This is the rough flow you are building toward:
+
+```ts
+Hono request
+  -> decode raw input with Schema
+  -> call a service
+  -> service asks for repositories through Context.Tag
+  -> AppLive provides those repositories through Layer
+  -> service returns success or tagged error
+  -> Hono maps that result to HTTP
+```
+
+You do not need to understand every line of that yet.
+You just need to know that each stage is filling in one part of that picture.
 
 ## Checkpoint
 

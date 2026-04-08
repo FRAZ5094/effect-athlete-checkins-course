@@ -27,17 +27,26 @@ What you should notice:
 - `Hono` is already set up.
 - The root route already works.
 - The athlete routes already exist, but the handlers are placeholders.
-- You are not being asked to set up the server yourself.
+- The server setup is already in place.
 
-## Why This Stage Exists
+## Read These Files In This Order
 
-You want to start from a known-good base. If the server does not run, everything else becomes noise.
+1. [src/server.ts](/Users/fraser/Github/effect-learning/src/server.ts)
+2. [src/app.ts](/Users/fraser/Github/effect-learning/src/app.ts)
+3. [src/http/routes/athletes.ts](/Users/fraser/Github/effect-learning/src/http/routes/athletes.ts)
+
+That order helps because:
+
+- `server.ts` shows how the app starts
+- `app.ts` shows how routes are mounted
+- `athletes.ts` shows where the unfinished work lives
 
 ## Checkpoint
 
 - The dev server starts.
 - `GET /` returns `Hello World`.
 - You know where the route placeholders live.
+- You know which files matter first and which files can wait.
 
 ## Questions
 
@@ -53,3 +62,12 @@ You want to start from a known-good base. If the server does not run, everything
 
 - Starting to implement route logic before confirming the shell is running.
 
+## If You Need Help
+
+If the app does not start, ask Claude or GPT exactly what happened:
+
+- what command you ran
+- what output or error you saw
+- which file you were looking at
+
+Keep the question about startup only. Do not jump ahead to later stages yet.
