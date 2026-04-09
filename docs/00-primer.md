@@ -67,6 +67,38 @@ await Effect.runPromise(program)
 
 That separation matters because the course keeps building bigger programs out of smaller effects.
 
+## `pipe(...)`
+
+You will also see `pipe(...)` early in Effect code.
+
+`pipe(...)` means:
+
+- start with a value
+- apply one helper to it
+- then apply the next helper to the result
+
+Tiny example:
+
+```ts
+const handledProgram = program.pipe(
+  Effect.catchTag("RollTooLow", (error) =>
+    printGreeting(`Try again, you rolled ${error.roll}`)
+  )
+)
+```
+
+Read that as:
+
+1. start with `program`
+2. attach `Effect.catchTag(...)`
+3. get back a new handled effect
+
+Beginner translation:
+
+- `pipe` helps you read transformations left to right
+- it is a common way to add behavior to an effect
+- later you will also see it with helpers like `Effect.provide(...)`
+
 ## `Effect.gen(...)`
 
 `Effect.gen(...)` is the easiest way to read a sequence of effects from top to bottom.
@@ -122,6 +154,7 @@ That is why tagged errors are useful:
 - the failure has a stable name
 - the failure can carry structured data
 - the recovery code can match that exact error type
+- `pipe(...)` gives you a readable way to attach that recovery
 
 ## Repositories First, Dependencies Later
 
