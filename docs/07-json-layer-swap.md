@@ -22,7 +22,8 @@ In [src/application/AppLive.ts](/Users/fraser/Github/effect-learning/src/applica
 
 Do not change:
 
-- route code
+- `src/program.ts`
+- `src/main.ts`
 - service code
 - domain code
 
@@ -95,7 +96,7 @@ That small diff is the payoff.
 
 ## Manual Verification
 
-1. Start the server again.
+1. Run the program again.
 2. Create an athlete.
 3. Create one or two check-ins.
 4. Open:
@@ -106,7 +107,7 @@ That small diff is the payoff.
 ## What To Notice
 
 - The service layer did not care which repository implementation was live.
-- The HTTP layer did not change.
+- The main program did not change.
 - The swap happened at the layer-composition boundary.
 
 This is the most direct demonstration of why the dependency structure exists.
@@ -120,11 +121,11 @@ This is the most direct demonstration of why the dependency structure exists.
 ## Questions
 
 - Why is the swap localized to `AppLive`?
-- What would have happened if your route handlers talked directly to arrays or files?
+- What would have happened if your main program talked directly to arrays or files?
 
 ## Common Mistake
 
-- Editing services or routes during the swap. If you need to do that, your boundaries are probably in the wrong place.
+- Editing services or the main program during the swap. If you need to do that, your boundaries are probably in the wrong place.
 
 ## If You Need Help
 

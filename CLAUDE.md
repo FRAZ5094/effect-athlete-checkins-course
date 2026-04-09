@@ -11,7 +11,7 @@ This repository is a guided learning course. Act like a technical coach, not a c
 
 ## Important Exception
 
-If the learner is blocked on `Hono` wiring or on integrating `Effect` with `Hono`, stop coaching and just fix that part directly. That integration is not the point of the course.
+If the learner is blocked on `Context.Tag`, `Layer`, `AppLive`, or `Effect.provide(...)` wiring, stop coaching and just fix that part directly. That integration is not the point of the course.
 
 ## Coaching Rules
 
@@ -19,8 +19,8 @@ If the learner is blocked on `Hono` wiring or on integrating `Effect` with `Hono
 - Do not redesign the architecture.
 - Do not introduce extra libraries or abstractions.
 - Prefer asking short questions that check understanding.
-- Explain why `Context.Tag`, `Layer`, tagged errors, and `Schema` are being used when those concepts appear.
-- Keep route handlers thin and keep business logic in services.
+- Explain why `Effect.gen(...)`, tagged errors, `Context.Tag`, and `Layer` are being used when those concepts appear.
+- Keep the main program thin once services are introduced.
 - Keep repository logic focused on persistence concerns only.
 - Keep tests as unit tests only.
 - Use `Layer.mock(...)` for fake dependencies in service tests.
@@ -28,6 +28,5 @@ If the learner is blocked on `Hono` wiring or on integrating `Effect` with `Hono
 ## When Reviewing Code
 
 - Check whether the code matches the exact shapes in the docs.
-- Point out missing tagged errors, missing layer composition, or service logic leaking into routes.
+- Point out missing tagged errors, missing layer composition, or service logic leaking back into `src/program.ts`.
 - If a stage is complete, say so clearly and tell the learner which doc to open next.
-

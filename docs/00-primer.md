@@ -1,282 +1,183 @@
 # Primer
 
-This repo teaches a small slice of Effect by building a backend API for athlete check-ins.
+This repo teaches a small slice of Effect by building one terminal program for athlete check-ins.
 
-You do not need to understand the whole library up front. You do need a rough mental model of how the core pieces fit together.
+The course deliberately starts smaller than a web app:
 
-## How To Read This Primer
+1. write a few tiny effects
+2. sequence them with `Effect.gen(...)`
+3. model an expected failure with a tagged error
+4. build repositories that return effects
+5. only then introduce `Context.Tag`, `Layer`, and services
 
-This primer is meant to give you a working mental model, not cover every detail.
+You do not need the whole library up front. You need a working mental model.
 
-The main goals are:
-
-1. An `Effect` describes work, failure, and dependencies.
-2. `Context.Tag` gives a dependency a typed name.
-3. `Layer` provides concrete implementations so effects can run.
-
-If one paragraph feels abstract, focus on the tiny code example that follows it.
-
-If something in this primer feels fuzzy, ask Claude or GPT a narrow question before moving on.
-
-Useful questions:
-
-- "In `Effect<A, E, R>`, what does `R` mean in this repo?"
-- "What is the difference between a `Context.Tag` and a `Layer`?"
-- "Can you explain the tiny examples in the primer without jumping to the later stages?"
-
-## The Effect Type
+## The Three Questions In `Effect<A, E, R>`
 
 An `Effect` is a typed description of work.
 
-The shape is:
+Its shape is:
 
 `Effect<A, E, R>`
 
 Read that as:
 
-- `A`: the success value it can return
-- `E`: the expected error type it can fail with
-- `R`: the dependencies it needs in order to run
+- `A`: what success value comes back
+- `E`: what expected error can come back
+- `R`: what dependencies are still required
 
-That third type parameter is the one that usually feels unusual at first.
-
-It means an effect can say:
-
-- "If you give me these dependencies..."
-- "...I can run..."
-- "...and I will either succeed with this value or fail with this error."
-
-So Effect is not only about async work. It is also about making requirements explicit in the type system.
+At the start of this course, most of your effects will not need dependencies yet, so the early focus is mostly on `A` and `E`.
 
 Tiny example:
 
 ```ts
-type GetAthleteEffect = Effect.Effect<Athlete, AthleteNotFound, AthleteRepository>
+const getGreeting = (name: string): Effect.Effect<string> =>
+  Effect.succeed(`Hello, ${name}`)
 ```
 
-Read that as:
+That effect:
 
-- this effect succeeds with an `Athlete`
-- it can fail with `AthleteNotFound`
-- it needs an `AthleteRepository` in order to run
+- succeeds with a `string`
+- has no expected error
+- has no dependency requirement
 
-That is the basic mental model you want to keep in your head throughout this repo.
+## Effects Describe Work
 
-Rule of thumb:
+An effect is not the result itself.
 
-- `A` answers "what do I get back if this works?"
-- `E` answers "what normal failure should I expect?"
-- `R` answers "what does this code need from the outside world?"
+It is a description of work you can run later.
 
-## Dependencies
+Tiny example:
 
-In a typical codebase, a function might quietly reach into:
+```ts
+const printGreeting = (name: string) =>
+  Effect.sync(() => {
+    console.log(`Hello, ${name}`)
+  })
+```
 
-- a database client
-- a logger
-- a repository
-- some config
+That does not print anything yet.
+It builds a value that says how to print something when the runtime runs it.
 
-Effect prefers making those dependencies visible.
+Then the entrypoint runs it:
 
-That is what the `R` type is for.
+```ts
+await Effect.runPromise(program)
+```
 
-If a function needs an `AthleteRepository`, that dependency appears in the effect type instead of being hidden in a global variable or hard-coded import.
+That separation matters because the course keeps building bigger programs out of smaller effects.
+
+## `Effect.gen(...)`
+
+`Effect.gen(...)` is the easiest way to read a sequence of effects from top to bottom.
 
 Tiny example:
 
 ```ts
 const program = Effect.gen(function* () {
-  const athleteRepository = yield* AthleteRepository
-  return yield* athleteRepository.getById("athlete-1")
+  const greeting = yield* getGreeting("Fraser")
+  yield* printGreeting(greeting)
 })
 ```
 
-That program is saying:
-
-- I need an `AthleteRepository`
-- once I have it, I can call one of its methods
-- until that dependency is provided, this is still just a description of work
-
-That last point matters a lot.
-
-When you write Effect code, you are often building a program in pieces first, then providing what it needs later.
-
-## Context.Tag
-
-`Context.Tag` gives a dependency a stable identity and a type.
-
-In practice, that means:
-
-- you define a tag for a service such as `AthleteRepository`
-- code can say "I need this dependency"
-- other code can provide the concrete implementation later
-
-So a tag is not the implementation itself. It is the typed name for a dependency that an effect can require.
-
-This is the core dependency-injection idea in Effect:
-
-- effects declare what they need
-- tags identify those needs
-- implementations get provided later
-
-Tiny example:
-
-```ts
-class AthleteRepository extends Context.Tag("AthleteRepository")<
-  AthleteRepository,
-  {
-    readonly getById: (id: string) => Effect.Effect<Athlete | null>
-  }
->() {}
-```
-
-That does not create a repository implementation.
-It creates the typed dependency name that other code can ask for.
-
 Beginner translation:
 
-- the tag is the label on the plug
-- the layer is the thing you plug into it
+- `yield*` means "run this effect and give me its success value"
+- the generator lets you write multi-step logic in order
 
-## Layer
+That is the main style you will use in this repo.
 
-A `Layer` is how you provide an implementation for one or more tags.
+## Tagged Errors
 
-For example:
-
-- `AthleteRepository.InMemory` can provide the in-memory implementation
-- `AthleteRepository.Json` can provide the JSON-backed implementation
-
-If an effect requires a repository dependency, the layer is what fulfills that requirement.
-
-You can also combine many layers together into one larger layer. That matters because a real program usually needs more than one dependency.
-
-In this repo, you will compose layers so the app can provide:
-
-- `AthleteRepository`
-- `CheckInRepository`
-- `AthleteService`
-- `CheckInService`
-
-Then the HTTP layer can run effects against that combined live layer.
-
-That is the high-level flow:
-
-1. Effects describe work and requirements.
-2. Tags name the required dependencies.
-3. Layers provide the implementations.
-4. Once the dependencies are provided, the effect can run.
+Effect prefers expected failures as values instead of thrown exceptions.
 
 Tiny example:
 
 ```ts
-const AppLive = Layer.mergeAll(
-  AthleteRepository.InMemory,
-  CheckInRepository.InMemory,
-  AthleteService.Live,
-  CheckInService.Live
-)
-```
-
-Later, once the dependencies are available:
-
-```ts
-const result = await Effect.runPromise(
-  Effect.provide(program, AppLive)
-)
-```
-
-That is the moment where the effect gets the dependencies it said it needed.
-
-The key point about layers is that they satisfy the `R` part of `Effect<A, E, R>`.
-
-## Errors
-
-Effect also makes expected failures explicit.
-
-Instead of throwing exceptions for normal application problems, you model them as values.
-
-In this course, that means tagged errors such as:
-
-- `AthleteNotFound`
-- `DuplicateAthleteName`
-- `AthleteCheckInLimitReached`
-
-That makes the service layer easier to reason about and lets the HTTP layer map those failures cleanly to status codes.
-
-Tiny example:
-
-```ts
-export class AthleteNotFound extends Data.TaggedError("AthleteNotFound")<{
-  readonly athleteId: string
+class RollTooLow extends Data.TaggedError("RollTooLow")<{
+  readonly roll: number
 }> {}
 ```
 
-Then a service can fail with it directly:
+Then an effect can fail with it:
 
 ```ts
-if (athlete === null) {
-  return yield* Effect.fail(new AthleteNotFound({ athleteId: id }))
+if (roll <= 3) {
+  return yield* Effect.fail(new RollTooLow({ roll }))
 }
 ```
 
-That is very different from an unexpected exception. It is a normal, modeled application failure.
-
-Rule of thumb:
-
-- use tagged errors for expected application failures
-- reserve defects / unexpected throws for "something is wrong with the program"
-
-## The Split In This Repo
-
-This repo keeps each concern in one place:
-
-- `Hono` handles HTTP
-- `Schema` decodes unknown request data into typed input
-- services hold business rules
-- repositories hold persistence logic
-- layers wire concrete implementations into the app
-
-That separation is the main thing you are learning here.
-
-This course only covers a small part of Effect. The goal is to understand how a few core ideas fit together to make backend code explicit, testable, and easy to swap.
-
-## One End-To-End Picture
-
-This is the rough flow you are building toward:
+And another effect can handle it explicitly:
 
 ```ts
-Hono request
-  -> decode raw input with Schema
-  -> call a service
-  -> service asks for repositories through Context.Tag
-  -> AppLive provides those repositories through Layer
-  -> service returns success or tagged error
-  -> Hono maps that result to HTTP
+program.pipe(
+  Effect.catchTag("RollTooLow", (error) =>
+    printGreeting(`Try again, you rolled ${error.roll}`)
+  )
+)
 ```
 
-You do not need to understand every line of that yet.
-You just need to know that each stage is filling in one part of that picture.
+That is why tagged errors are useful:
 
-## Checkpoint
+- the failure has a stable name
+- the failure can carry structured data
+- the recovery code can match that exact error type
 
-- You can read `Effect<A, E, R>` at a high level.
-- You know that `R` represents dependencies.
-- You know that a `Context.Tag` names a dependency and a `Layer` provides it.
-- You know that HTTP stays thin and the business logic lives elsewhere.
+## Repositories First, Dependencies Later
 
-## Questions
+After the intro program, you will build in-memory repositories.
 
-- In `Effect<A, E, R>`, what do `A`, `E`, and `R` each mean?
-- What problem does `Context.Tag` solve?
-- What does a `Layer` actually provide?
-- What is the difference between a service and a repository in this repo?
+Those repositories still return `Effect`, but you will call them directly at first.
 
-## Manual Verification
+That keeps the learning path simpler:
 
-- Read the file once in markdown preview.
+- first learn how to write and run effects
+- then use effects in repository methods
+- then add services and dependency injection later
 
-## Common Mistake
+## `Context.Tag` And `Layer`
 
-- Thinking a tag is the implementation itself. The tag names the dependency; the layer provides the implementation.
+These appear later in the course on purpose.
+
+Once the learner already understands:
+
+- how to return an `Effect`
+- how to sequence effects in a program
+- how to model an expected failure
+
+then `Context.Tag` and `Layer` become much easier to understand.
+
+The short version:
+
+- `Context.Tag` gives a dependency a typed name
+- `Layer` provides a concrete implementation for that dependency
+
+Later in the repo, the main program will switch from:
+
+- constructing repositories directly
+
+to:
+
+- asking for services from the context
+- providing them with `AppLive`
+
+That later step is how the course introduces the `R` in `Effect<A, E, R>`.
+
+## A Good Working Mental Model
+
+Keep this in your head as you go:
+
+1. An effect describes work.
+2. `Effect.gen(...)` sequences many effects into one program.
+3. Tagged errors model expected failures.
+4. Repositories can return effects even when they are simple.
+5. `Context.Tag` and `Layer` are how bigger programs ask for dependencies later.
+
+If something feels fuzzy, ask a narrow question before moving on.
+
+Useful questions:
+
+- "Can you explain why `Effect.succeed(...)` and `Effect.sync(...)` are different?"
+- "What exactly does `yield*` give me back inside `Effect.gen(...)`?"
+- "Why is a tagged error better than throwing in this repo?"
+- "What does the `R` start to mean once we get to layers?"

@@ -1,10 +1,10 @@
 {
   "name": "effect-athlete-checkins-course",
   "version": "1.0.0",
-  "description": "A guided Effect course built around a small athlete check-ins API.",
+  "description": "A guided Effect course built around one small athlete check-ins program.",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "start": "tsx src/server.ts",
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
@@ -12,16 +12,14 @@
   "keywords": [
     "effect",
     "typescript",
-    "hono",
+    "layers",
     "course"
   ],
   "author": "Fraser",
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@hono/node-server": "^1.19.13",
-    "effect": "^3.21.0",
-    "hono": "^4.12.12"
+    "effect": "^3.21.0"
   },
   "devDependencies": {
     "@types/node": "^25.5.2",

@@ -1,6 +1,6 @@
 # What Next In Effect
 
-You only used a small part of Effect in this repo. Here are other backend-focused features worth learning next.
+You only used a small part of Effect in this repo. Here are other Effect features worth learning next.
 
 ## 1. Branded Types
 
@@ -8,7 +8,7 @@ Use branded types when you want stronger type distinctions such as `AthleteId` v
 
 ## 2. Schema
 
-You used basic request decoding here. `Schema` also helps with transformations, richer validation, and encoded versus decoded data shapes.
+You did not need `Schema` for the core course path. That is deliberate. Once the program/service/layer model feels comfortable, `Schema` is a good next step for runtime validation and decoding.
 
 ## 3. Option
 
@@ -60,11 +60,12 @@ Streams are useful when you want to process sequences of values over time rather
 
 ## 15. HTTP Modules
 
-Effect also has HTTP tools beyond this course. Those become more useful once the core mental model is comfortable.
+Effect also has HTTP tools beyond this course. They make more sense after the core effect, service, and layer model feels comfortable.
 
 ## Suggested Next Steps
 
 - Revisit this repo and add branded ids.
+- Add `Schema` for validating console input or file input.
 - Add structured logging around service calls.
 - Add metrics around `createAthlete` and `recordCheckIn`.
 - Read more about tracing and how it helps in larger backend systems.

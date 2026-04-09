@@ -1,6 +1,6 @@
 # Effect Athlete Check-ins Course
 
-Start here.
+This version starts with a single runnable `Effect` program and only introduces `Context.Tag`, `Layer`, and service wiring after the basic Effect mental model is comfortable.
 
 ## Get Your Own Copy
 
@@ -20,43 +20,53 @@ npm install
 npm run dev
 ```
 
-Then open `http://localhost:3000` and make sure you see `Hello World`.
+You should see a simple starter message in the terminal.
 
 ## Read The Guides In VS Code
 
 Open this folder in VS Code, then open any file in `docs/`.
 
-To preview the markdown nicely on Mac:
+To preview markdown nicely on Mac:
 
 - Press `Cmd+Shift+V`
 - Or click the preview icon in the top-right corner of the editor
 
 ## Start Here
 
-Begin with [docs/00-primer.md](/Users/fraser/Github/effect-learning/docs/00-primer.md), then continue in order through the numbered files.
+Begin with [docs/00-primer.md](/Users/fraser/Github/effect-learning/docs/00-primer.md), then continue through the numbered files in order.
+
+The course now progresses like this:
+
+1. Run one small Effect program
+2. Learn `Effect.succeed`, `Effect.gen`, tagged errors, and `catchTag`
+3. Build the athlete repository
+4. Build the check-in repository and call both repositories directly from one program
+5. Introduce services, `Context.Tag`, `Layer`, and `AppLive`
+6. Unit test the services with `Layer.mock(...)`
+7. Swap the repository implementation from memory to JSON
 
 ## How To Work Through The Course
 
 - Only work on one stage at a time.
 - Do not skip ahead if the current stage still feels fuzzy.
-- At the start of each stage, read the opening explanation and examples before editing code.
-- Keep `npm run dev` and `npm run typecheck` nearby while you work.
-- If you get stuck, compare your code to the non-answer examples in the current stage before asking for help.
+- Read the examples in the current doc before editing code.
+- Keep `npm run dev`, `npm run typecheck`, and later `npm test` nearby.
+- Stay in the current stage's files. Do not redesign the repo while learning.
 
 ## If You Get Stuck
 
 Ask Claude or GPT for help inside this repo.
 
 - Ask about the current stage only.
-- Say which file you are working in.
+- Say which file you are editing.
 - Say what feels confusing.
 - Ask for coaching first, not the full answer immediately.
 
 Example questions:
 
-- "I am in stage 2, working in `AthleteRepositoryInMemory.ts`. Can you explain what should live inside the factory?"
-- "I am in stage 5, working in `athletes.ts`. Can you explain the route flow without rewriting the whole file?"
+- "I am in stage 2, working in `src/program.ts`. Can you explain how the generator should flow?"
+- "I am in stage 5, working in `src/application/AthleteService.ts`. Can you review whether my tagged errors are in the right place?"
 
-If the issue is specifically `Hono` wiring or `Effect` integration with `Hono`, ask it to fix that part directly so you can stay focused on the course.
+If the issue is specifically `Context.Tag`, `Layer`, or `Effect.provide(...)` wiring, ask it to fix that part directly so you can stay focused on the learning goal.
 
 The repo includes [AGENTS.md](/Users/fraser/Github/effect-learning/AGENTS.md) and [CLAUDE.md](/Users/fraser/Github/effect-learning/CLAUDE.md) with guidance for how the assistant should help you.

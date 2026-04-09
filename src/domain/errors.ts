@@ -1,4 +1,4 @@
-// TODO in docs/04-services-and-errors.md:
+// TODO in docs/05-services-context-and-layers.md:
 // Define your tagged domain errors here.
 // Suggested errors:
 // - AthleteNotFound
@@ -6,4 +6,3 @@
 // - AthleteCheckInLimitReached
 
 export {}
-

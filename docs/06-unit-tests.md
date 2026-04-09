@@ -13,10 +13,10 @@ Keep these as unit tests only.
 
 Do not test:
 
-- `Hono`
-- HTTP routing
-- Postman flows
-- file persistence
+- the terminal entrypoint
+- `src/main.ts`
+- JSON persistence
+- repository internals
 
 Only test service behavior.
 
@@ -146,7 +146,7 @@ Keep the test focused on one business rule at a time.
 
 By the end of this stage, you should be able to:
 
-- test a service without booting the whole app
+- test a service without booting the whole program
 - swap in a fake dependency layer
 - assert on domain errors as values
 
@@ -179,7 +179,7 @@ Write tests for:
 
 - `npm test` passes
 - the tests use `Layer.mock(...)`
-- the tests do not call HTTP routes
+- the tests do not depend on terminal output
 
 ## Questions
 
