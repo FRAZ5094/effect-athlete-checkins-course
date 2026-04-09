@@ -12,6 +12,12 @@ The course deliberately starts smaller than a web app:
 
 You do not need the whole library up front. You need a working mental model.
 
+One practical habit will help a lot in this repo:
+
+- when a function returns an `Effect` and the type is doing important teaching work, hover it in VS Code
+- look at the full TypeScript type, especially the `A`, `E`, and `R`
+- if a later step feels abstract, inspect the inferred type before reading more explanations
+
 ## The Three Questions In `Effect<A, E, R>`
 
 An `Effect` is a typed description of work.
@@ -40,6 +46,8 @@ That effect:
 - succeeds with a `string`
 - has no expected error
 - has no dependency requirement
+
+If this still feels abstract, hover `getGreeting` or `Effect.succeed(...)` in VS Code and read the full inferred type. Seeing the TypeScript type directly usually makes the `A`, `E`, and `R` slots easier to connect to the code in front of you.
 
 ## Effects Describe Work
 
@@ -117,6 +125,8 @@ Beginner translation:
 - `yield*` means "run this effect and give me its success value"
 - the generator lets you write multi-step logic in order
 
+If `yield*` feels mysterious, hover the effect on the right-hand side and then hover the variable you get back. Seeing both types in VS Code is often the quickest way to understand what the program is extracting at each step.
+
 That is the main style you will use in this repo.
 
 ## Tagged Errors
@@ -184,6 +194,8 @@ The short version:
 
 - `Context.Tag` gives a dependency a typed name
 - `Layer` provides a concrete implementation for that dependency
+
+This is another point where the TypeScript types help. When you first reach tags and layers, hover the service tags and the composed app layer in VS Code. The type signatures will show you what dependencies are still required and what the layer is providing.
 
 Later in the repo, the main program will switch from:
 

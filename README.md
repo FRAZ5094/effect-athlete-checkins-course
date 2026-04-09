@@ -50,6 +50,7 @@ The course now progresses like this:
 - Only work on one stage at a time.
 - Do not skip ahead if the current stage still feels fuzzy.
 - Read the examples in the current doc before editing code.
+- When a type signature is doing important teaching work, hover it in VS Code and inspect the full TypeScript type.
 - Keep `npm run dev`, `npm run typecheck`, and later `npm test` nearby.
 - Stay in the current stage's files. Do not redesign the repo while learning.
 
