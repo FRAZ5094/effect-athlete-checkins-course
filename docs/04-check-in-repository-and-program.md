@@ -5,7 +5,7 @@ Goal: add the second repository and use both repositories directly from one prog
 ## Files To Edit
 
 - `src/infrastructure/in-memory/CheckInRepositoryInMemory.ts`
-- `src/program.ts`
+- `src/main.ts`
 
 ## Files To Read
 
@@ -23,7 +23,7 @@ Its methods are:
 - `listByAthleteId(athleteId)`
 - `countByAthleteId(athleteId)`
 
-Then update [src/program.ts](/Users/fraser/Github/effect-learning/src/program.ts) so the program constructs both in-memory repositories directly and uses them in order:
+Then update [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts) so the program constructs both in-memory repositories directly and uses them in order:
 
 1. create an athlete
 2. create one or two check-ins for that athlete
@@ -47,7 +47,7 @@ Those all arrive in the next stage.
 1. [src/domain/CheckIn.ts](/Users/fraser/Github/effect-learning/src/domain/CheckIn.ts)
 2. [src/application/CheckInRepository.ts](/Users/fraser/Github/effect-learning/src/application/CheckInRepository.ts)
 3. [src/infrastructure/in-memory/CheckInRepositoryInMemory.ts](/Users/fraser/Github/effect-learning/src/infrastructure/in-memory/CheckInRepositoryInMemory.ts)
-4. [src/program.ts](/Users/fraser/Github/effect-learning/src/program.ts)
+4. [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts)
 
 ## Example 1: Optional Fields Becoming `null`
 
@@ -114,7 +114,7 @@ In [src/infrastructure/in-memory/CheckInRepositoryInMemory.ts](/Users/fraser/Git
 4. Normalize missing optional values to `null`.
 5. Filter and count by `athleteId`.
 
-In [src/program.ts](/Users/fraser/Github/effect-learning/src/program.ts):
+In [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts):
 
 1. Import both in-memory repository factories.
 2. Construct them directly at the top of the file.

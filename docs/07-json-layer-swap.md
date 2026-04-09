@@ -22,7 +22,6 @@ In [src/application/AppLive.ts](/Users/fraser/Github/effect-learning/src/applica
 
 Do not change:
 
-- `src/program.ts`
 - `src/main.ts`
 - service code
 - domain code

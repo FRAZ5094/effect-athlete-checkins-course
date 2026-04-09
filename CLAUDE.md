@@ -20,7 +20,7 @@ If the learner is blocked on `Context.Tag`, `Layer`, `AppLive`, or `Effect.provi
 - Do not introduce extra libraries or abstractions.
 - Prefer asking short questions that check understanding.
 - Explain why `Effect.gen(...)`, tagged errors, `Context.Tag`, and `Layer` are being used when those concepts appear.
-- Keep the main program thin once services are introduced.
+- Keep `src/main.ts` focused on orchestrating the current stage.
 - Keep repository logic focused on persistence concerns only.
 - Keep tests as unit tests only.
 - Use `Layer.mock(...)` for fake dependencies in service tests.
@@ -28,5 +28,5 @@ If the learner is blocked on `Context.Tag`, `Layer`, `AppLive`, or `Effect.provi
 ## When Reviewing Code
 
 - Check whether the code matches the exact shapes in the docs.
-- Point out missing tagged errors, missing layer composition, or service logic leaking back into `src/program.ts`.
+- Point out missing tagged errors, missing layer composition, or service logic leaking into the wrong part of `src/main.ts`.
 - If a stage is complete, say so clearly and tell the learner which doc to open next.

@@ -37,7 +37,7 @@ Begin with [docs/00-primer.md](/Users/fraser/Github/effect-learning/docs/00-prim
 
 The course now progresses like this:
 
-1. Run one small Effect program
+1. Run one small Effect program in `src/main.ts`
 2. Learn `Effect.succeed`, `Effect.gen`, tagged errors, and `catchTag`
 3. Build the athlete repository
 4. Build the check-in repository and call both repositories directly from one program
@@ -64,7 +64,7 @@ Ask Claude or GPT for help inside this repo.
 
 Example questions:
 
-- "I am in stage 2, working in `src/program.ts`. Can you explain how the generator should flow?"
+- "I am in stage 2, working in `src/main.ts`. Can you explain how the generator should flow?"
 - "I am in stage 5, working in `src/application/AthleteService.ts`. Can you review whether my tagged errors are in the right place?"
 
 If the issue is specifically `Context.Tag`, `Layer`, or `Effect.provide(...)` wiring, ask it to fix that part directly so you can stay focused on the learning goal.

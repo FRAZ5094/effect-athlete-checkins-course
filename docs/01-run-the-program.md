@@ -6,7 +6,6 @@ Goal: confirm the starter project runs before you touch the Effect code.
 
 - `package.json`
 - `src/main.ts`
-- `src/program.ts`
 
 ## What To Do
 
@@ -19,35 +18,31 @@ npm run dev
 
 2. Confirm you see the starter message in the terminal.
 3. Read [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts).
-4. Read [src/program.ts](/Users/fraser/Github/effect-learning/src/program.ts).
 
 What you should notice:
 
-- `main.ts` is the real entrypoint
-- `program.ts` exports one Effect program
+- `main.ts` contains both the program and the code that runs it
 - nothing about HTTP is involved
 - `Effect.runPromise(...)` is how the program gets executed
 
 ## Read These Files In This Order
 
 1. [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts)
-2. [src/program.ts](/Users/fraser/Github/effect-learning/src/program.ts)
 
 That order helps because:
 
-- `main.ts` shows how the runtime starts
-- `program.ts` shows the Effect value that gets run
+- `main.ts` shows both the Effect value and how it gets run
 
 ## Checkpoint
 
 - `npm run dev` starts cleanly
 - you know which file runs the program
-- you know which file you will edit in stage 2
+- you know which file you will keep editing in stage 2
 
 ## Questions
 
 - Which file calls `Effect.runPromise(...)`?
-- Which file exports the program that gets run?
+- Which file defines the program that gets run?
 - What is the current starter output?
 
 ## Manual Verification

@@ -4,7 +4,7 @@ Goal: get comfortable writing and running one small Effect program before you to
 
 ## Files To Edit
 
-- `src/program.ts`
+- `src/main.ts`
 
 ## Files To Read
 
@@ -32,7 +32,6 @@ The intended flow is:
 ## Read The Real Files In This Order
 
 1. [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts)
-2. [src/program.ts](/Users/fraser/Github/effect-learning/src/program.ts)
 
 ## Example 1: A Tiny Success Effect
 
@@ -98,7 +97,7 @@ That is the exact pattern you should practice here.
 
 ## What You Should Literally Write
 
-In [src/program.ts](/Users/fraser/Github/effect-learning/src/program.ts):
+In [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts):
 
 1. Add one small helper that returns `Effect.Effect<string>`.
 2. Add one small helper that prints a line.
@@ -123,14 +122,14 @@ By the end of this stage, you should be able to explain:
 - the difference between building an effect and running it
 - what `yield*` is doing inside `Effect.gen(...)`
 - why a tagged error is easier to match than a thrown exception
-- why `src/main.ts` stays tiny
+- why `Effect.runPromise(...)` should stay at the bottom of the file
 
 ## Checkpoint
 
 - `npm run dev` runs your program
 - you can see the success path sometimes
 - you can see the handled tagged error path sometimes
-- all of the logic lives in `src/program.ts`
+- all of the logic lives in `src/main.ts`
 
 ## Questions
 
@@ -156,5 +155,5 @@ You should eventually see both:
 Ask a narrow question:
 
 - "I understand `Effect.succeed`, but I do not understand what `yield*` gives back."
-- "Can you review just the tagged error part in `src/program.ts`?"
+- "Can you review just the tagged error part in `src/main.ts`?"
 - "Can you explain why `catchTag` belongs after the failing effect?"

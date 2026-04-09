@@ -8,7 +8,6 @@ Goal: move the business rules into services, model expected failures as tagged e
 - `src/application/AthleteService.ts`
 - `src/application/CheckInService.ts`
 - `src/application/AppLive.ts`
-- `src/program.ts`
 - `src/main.ts`
 
 ## Files To Read
@@ -18,7 +17,7 @@ Goal: move the business rules into services, model expected failures as tagged e
 
 ## What Changes In This Stage
 
-Until now, `src/program.ts` has been constructing repositories directly.
+Until now, `src/main.ts` has been constructing repositories directly.
 
 In this stage, you will change that.
 
@@ -49,8 +48,7 @@ Use `Data.TaggedError(...)`.
 2. [src/application/AthleteService.ts](/Users/fraser/Github/effect-learning/src/application/AthleteService.ts)
 3. [src/application/CheckInService.ts](/Users/fraser/Github/effect-learning/src/application/CheckInService.ts)
 4. [src/application/AppLive.ts](/Users/fraser/Github/effect-learning/src/application/AppLive.ts)
-5. [src/program.ts](/Users/fraser/Github/effect-learning/src/program.ts)
-6. [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts)
+5. [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts)
 
 ## Example 1: Turning `null` Into A Domain Error
 
@@ -202,17 +200,13 @@ In [src/application/AppLive.ts](/Users/fraser/Github/effect-learning/src/applica
 2. Compose the two service layers.
 3. Keep all live wiring in this file.
 
-In [src/program.ts](/Users/fraser/Github/effect-learning/src/program.ts):
+In [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts):
 
 1. Stop constructing repositories directly.
 2. Pull services from the context.
 3. Build the same program flow through services instead.
 4. Catch tagged errors and print useful messages.
-
-In [src/main.ts](/Users/fraser/Github/effect-learning/src/main.ts):
-
-1. Wrap the program with `Effect.provide(program, AppLive)`.
-2. Keep the entrypoint tiny.
+5. Wrap the program with `Effect.provide(program, AppLive)` before running it.
 
 ## Expected Outcome
 
@@ -244,7 +238,7 @@ By the end of this stage, you should be able to explain:
 
 ## Common Mistake
 
-- leaving repository construction in `src/program.ts` after introducing `AppLive`
+- leaving repository construction in `src/main.ts` after introducing `AppLive`
 
 ## If You Need Help
 
