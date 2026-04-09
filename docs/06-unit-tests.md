@@ -199,10 +199,6 @@ If you get stuck, start with the easiest possible test:
 
 Then add the failing cases after that.
 
-## Common Mistake
-
-- Re-testing repository behavior in service tests instead of mocking it.
-
 ## If You Need Help
 
 Useful questions for Claude or GPT:

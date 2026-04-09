@@ -146,10 +146,6 @@ You should eventually see both:
 - the success path
 - the handled tagged error path
 
-## Common Mistake
-
-- throwing an exception instead of using `Effect.fail(...)`
-
 ## If You Need Help
 
 Ask a narrow question:

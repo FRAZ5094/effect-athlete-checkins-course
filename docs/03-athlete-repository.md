@@ -133,31 +133,9 @@ By the end of this stage, you should be able to explain:
 
 - Run `npm run typecheck`
 
-## Common Mistake
-
-- putting business rules in the repository instead of just persistence logic
-
 ## If You Need Help
 
 Useful questions:
 
 - "Can you review only the `create` method in `AthleteRepositoryInMemory.ts`?"
 - "Can you explain why the array should stay inside the factory?"
-
-- `countByAthleteId` counting every check-in instead of one athlete's check-ins
-- forgetting to normalize optional fields to `null`
-- forgetting imports in `AppLive`
-
-## Common Mistake
-
-- Returning the total number of check-ins across all athletes from `countByAthleteId`.
-
-## If You Need Help
-
-Ask Claude or GPT focused questions about the current step.
-
-Useful questions:
-
-- "Can you explain what `AppLive` is providing here?"
-- "Can you review whether my `countByAthleteId` is counting the right thing?"
-- "Can you explain layer composition in this stage without jumping ahead?"

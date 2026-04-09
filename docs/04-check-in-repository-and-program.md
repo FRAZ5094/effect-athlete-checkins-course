@@ -148,10 +148,6 @@ By the end of this stage, you should be able to explain:
 2. Confirm the terminal output shows the created athlete
 3. Confirm the terminal output shows the created check-ins
 
-## Common Mistake
-
-- counting all check-ins instead of only that athlete's check-ins
-
 ## If You Need Help
 
 Useful questions:

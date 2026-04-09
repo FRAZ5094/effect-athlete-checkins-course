@@ -236,10 +236,6 @@ By the end of this stage, you should be able to explain:
 3. Trigger at least one tagged error path and confirm the printed message matches it
 4. Run `npm run typecheck`
 
-## Common Mistake
-
-- leaving repository construction in `src/main.ts` after introducing `AppLive`
-
 ## If You Need Help
 
 Useful questions:

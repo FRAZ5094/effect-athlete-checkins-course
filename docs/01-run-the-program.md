@@ -49,10 +49,6 @@ That order helps because:
 
 - Run `npm run dev`
 
-## Common Mistake
-
-- Starting stage 2 before confirming the starter project already runs
-
 ## If You Need Help
 
 If the project does not start, ask Claude or GPT exactly what happened:

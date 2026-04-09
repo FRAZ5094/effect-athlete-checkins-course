@@ -122,10 +122,6 @@ This is the most direct demonstration of why the dependency structure exists.
 - Why is the swap localized to `AppLive`?
 - What would have happened if your main program talked directly to arrays or files?
 
-## Common Mistake
-
-- Editing services or the main program during the swap. If you need to do that, your boundaries are probably in the wrong place.
-
 ## If You Need Help
 
 Ask Claude or GPT to review the diff in `AppLive.ts`.
